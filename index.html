@@ -13,11 +13,11 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script>
 	<title>Larzang's Item List</title>
 	<script type="text/javascript">
-        const itemListURL = "https://raw.githubusercontent.com/Cathienna/rimworld-prices/main/StoreItems.json";
-        const traitListURL = "https://raw.githubusercontent.com/Cathienna/rimworld-prices/main/ShopExt.json";
-        const eventListURL = "https://raw.githubusercontent.com/Cathienna/rimworld-prices/main/StoreEvents.json";
-        const modListURL = "https://raw.githubusercontent.com/Cathienna/rimworld-prices/main/modlist.json";
-        const commandsListURL = "https://raw.githubusercontent.com/Cathienna/rimworld-prices/main/commands.json";
+        const itemListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/StoreItems.json";
+        const traitListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/ShopExt.json";
+        const eventListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/StoreEvents.json";
+        //const modListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/modlist.json";
+        const commandsListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/commands.json";
     </script>
 	<link rel="icon"
 		href="https://static-cdn.jtvnw.net/jtv_user_pictures/ffc52793-59db-430c-ad40-bebb435a5509-profile_image-70x70.png">
@@ -343,7 +343,7 @@
 		});
 
 
-		let commandsList = null;
+		/*let commandsList = null;
 		$.getJSON(commandsListURL, function (data) {
 			var options = {
 				valueNames: ['defName', 'description', 'usage', 'userLevel'],
@@ -356,7 +356,7 @@
 			});
 
 			commandsList = new List('commands', options, commandsData);
-		});
+		});*/
 
 		let racesList = null;
 		$.getJSON(traitListURL, function (data) {
