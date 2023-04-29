@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script>
+	<title>OccultAxis's Item List</title>
+	<script type="text/javascript">
+		const itemListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/StoreItems.json";
+		const eventListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/StoreIncidents.json";
+		const traitListURL = "https://raw.githubusercontent.com/Spacedestructor/Larzang-Toolkit/master/ShopExt.json";
+	</script>
+	<link rel="icon"
+		href="https://static-cdn.jtvnw.net/jtv_user_pictures/ffc52793-59db-430c-ad40-bebb435a5509-profile_image-70x70.png">
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<a class="navbar-brand" href="#">OccultAxis</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+			aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="https://www.twitch.tv/Larzang">Larzang on Twitch</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<main role="main">
+		<div class="jumbotron">
+			<div class="container">
+				<h1 class="display-3">TwitchToolkit</h1>
+				<p>TwitchToolkit is a mod written by Twitch.tv/hodlhodl that integrates storytelling decisions into chat
+					votes, awards viewers coins for watching, and those coins can be spent on items/events in game.</p>
+				<div> If this Page is acting up you may want to <a href="https://www.githubstatus.com">check here for
+						Issues</a></div>
+				<div>
+					<form id="Cost-Calculator">
+						<label for="Coins">Coins/Ammount:</label>
+						<input type="number" id="Coins" name="Coins" value="0" autocomplete="off" placeholder="0"
+							required>
+						<label for="Item">Cost:</label>
+						<input type="number" id="Cost" name="Cost" value="0" autocomplete="off" placeholder="0"
+							required><br>
+						<input type="radio" id="Calculate_Ammount" name="Calculate_Options" value="Calculate Amount"
+							checked>
+						<label for="Calculate_Ammount">Calculate Ammount</label>
+						<input type="radio" id="Calculate_Cost" name="Calculate_Options" value="Calculate Cost">
+						<label for="Calculate_Cost">Calculate Cost</label><br>
+						<button type="button" onclick="Calculator()">Calculate</button>
+						<button type="button" onclick="Reset()">Reset</button>
+					</form>
+					<div id="Results"></div>
+				</div>
+			</div>
+		</div>
+		<div ng-app='tabs' ng-controller='tabCtrl'>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class='tabs'>
+							<form>
+								<div class="form-group">
+									<button class="btn btn-success" ng-class="{'active': (selected == '1')}"
+										ng-click='selected=1'>Items</button>
+									<button class="btn btn-success" ng-class="{'active': (selected == '2')}"
+										ng-click='selected=2'>Events </button>
+									<button class="btn btn-success" ng-class="{'active': (selected == '3')}"
+										ng-click='selected=3'>Traits</button>
+									<button class="btn btn-success" ng-class="{'active': (selected == '4')}"
+										ng-click='selected=4'>Races</button>
+									<button class="btn btn-success" ng-class="{'active': (selected == '5')}"
+										ng-click='selected=5'>Commands</button>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label" for="">Price Between:</label>
+									<div class="col-sm-2">
+										<input type="number" class="form-control" id="item-price-min" placeholder="0">
+									</div>
+									<div class="col-sm-2">
+										<input type="number" class="form-control" id="item-price-max"
+											placeholder="100000">
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="row" ng-show='selected == 1'>
+					<div class="col-md-12">
+						<div id="items">
+							<div class="input-group input-group-sm mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Search</span>
+								</div>
+								<input type="text" class="form-control search" aria-label="Search"
+									aria-describedby="inputGroup-sizing-sm">
+							</div>
+							<p>
+								<button type="button" class="btn btn-primary sort" data-sort="abr">
+									Sort
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="price">
+									Sort by Price
+								</button>
+							</p>
+							<table class="table items">
+								<tr>
+									<th scope="col" class="sort" data-sort="abr">Name</th>
+									<th scope="col" class="sort" data-sort="price">Price</th>
+									<th scope="col" class="sort" data-sort="category">Category</th>
+								</tr>
+								<tbody class="list">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row" ng-show='selected == 2'>
+					<div class="col-md-12">
+						<div id="events">
+							<div class="input-group input-group-sm mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Search</span>
+								</div>
+								<input type="text" class="form-control search" aria-label="Search"
+									aria-describedby="inputGroup-sizing-sm">
+							</div>
+							<p>
+								<button type="button" class="btn btn-primary sort" data-sort="abr">
+									Sort
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="price">
+									Sort by Price
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="karmatype">
+									Sort by Karma
+								</button>
+							</p>
+							<table class="table events">
+								<tr>
+									<th scope="col" class="sort" data-sort="abr">Name</th>
+									<th scope="col" class="sort" data-sort="price">Price</th>
+									<th scope="col" class="sort" data-sort="karmatype">Karma</th>
+								</tr>
+								<tbody class="list">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row" ng-show="selected == 3">
+					<div class="col-md-12">
+						<div id="traits">
+							<div class="input-group input-group-sm mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Search</span>
+								</div>
+								<input type="text" class="form-control search" aria-label="Search"
+									aria-describedby="inputGroup-sizing-sm">
+							</div>
+							<p>
+								<button type="button" class="btn btn-primary sort" data-sort="name">
+									Sort
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="addPrice">
+									Sort by Price
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="description">
+									Sort by Description
+								</button>
+							</p>
+							<table class="table traits">
+								<tbody>
+									<tr>
+										<th scope="col" class="sort" data-sort="name">Name</th>
+										<th scope="col" class="sort" data-sort="addPrice">Add Cost</th>
+										<th scope="col" class="sort" data-sort="removePrice">Remove Cost</th>
+										<th scope="col" class="sort" data-sort="description">Description</th>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row" ng-show="selected == 4">
+					<div class="col-md-12">
+						<div id="races">
+							<div class="input-group input-group-sm mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Search</span>
+								</div>
+								<input type="text" class="form-control search" aria-label="Search"
+									aria-describedby="inputGroup-sizing-sm">
+							</div>
+							<p style="color:#959595">
+								<button type="button" class="btn btn-primary sort" data-sort="name">
+									Sort by Name
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="price">
+									Sort by Price
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="description">
+									Sort by Description
+								</button>
+							</p>
+							<table class="table commands">
+								<tbody>
+									<tr>
+										<th scope="col" class="sort" data-sort="name">Comand</th>
+										<th scope="col" class="sort" data-sort="price">Description</th>
+										<th scope="col" class="sort" data-sort="description">Usage</th>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row" ng-show="selected == 5">
+					<div class="col-md-12">
+						<div id="commands">
+							<div class="input-group input-group-sm mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Search</span>
+								</div>
+								<input type="text" class="form-control search" aria-label="Search"
+									aria-describedby="inputGroup-sizing-sm">
+							</div>
+							<p>
+								<button type="button" class="btn btn-primary sort" data-sort="defName">
+									Sort by Command
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="description">
+									Sort by Description
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="usage">
+									Sort by Usage
+								</button>
+								<button type="button" class="btn btn-primary sort" data-sort="userLevel">
+									Sort by Restriction
+								</button>
+							</p>
+							<table class="table commands">
+								<tbody>
+									<tr>
+										<th scope="col" class="sort" data-sort="defName">Comand</th>
+										<th scope="col" class="sort" data-sort="description">Description</th>
+										<th scope="col" class="sort" data-sort="usage">Usage</th>
+										<th scope="col" class="sort" data-sort="userLevel">Restriction</th>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	<footer class="text-muted">
+		<div class="container">
+			<p class="float-right">
+				<a href="#">Back to top</a>
+			</p>
+			<p>Album example is © Bootstrap, but please download and customize it for yourself!</p>
+			<p>New to Bootstrap? <a href="../../">Visit the homepage</a> or read our <a
+					href="../../getting-started/">getting started guide</a>.</p>
+		</div>
+	</footer>
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+	<script src="https://embed.twitch.tv/embed/v1.js"></script>
+	<script type="text/javascript">
+		let itemList = null;
+		$.getJSON(itemListURL, function (data) {
+			var options = {
+				valueNames: ['abr', 'price', 'category'],
+				item: '<tr><td class="abr" scope="row"></td><td class="price"></td><td class="category"></td></tr>'
+			};
+
+			var itemData = [];
+			$.each(data.items, function (index, value) {
+				if (value["price"] > 0) {
+					itemData.push(value);
+				}
+			});
+
+			itemList = new List('items', options, itemData);
+		});
+
+		let eventList = null;
+		$.getJSON(eventListURL, function (data) {
+			var options = {
+				valueNames: ['abr', 'price', 'karmatype'],
+				item: '<tr><td class="abr" scope="row"></td><td class="price"></td><td class="karmatype"></td></tr>'
+			};
+
+			var eventData = [];
+			$.each(data.incitems, function (index, value) {
+				if (value["price"] > 0) {
+					eventData.push(value);
+				}
+			});
+
+			eventList = new List('events', options, eventData);
+		});
+
+		let traitList = null;
+		$.getJSON(traitListURL, function (data) {
+			var options = {
+				valueNames: ['name', 'addPrice', 'removePrice', 'description'],
+				item: '<tr><td class="name" scope="row"></td><td class="addPrice"></td><td class="removePrice"></td><td class="description"></td></tr>'
+			};
+
+			var traitData = [];
+			$.each(data.traits, function (index, value) {
+				if (value["addPrice"] > 0) {
+					traitData.push(value);
+				}
+			});
+
+			traitList = new List('traits', options, traitData);
+		});
+
+
+		let commandsList = null;
+		$.getJSON(commandsListURL, function (data) {
+			var options = {
+				valueNames: ['defName', 'description', 'usage', 'userLevel'],
+				item: '<tr><td class="defName" scope="row"></td><td class="description"></td><td class="usage"></td><td class="userLevel"></td></tr>'
+			};
+
+			var commandsData = [];
+			$.each(data.commands, function (index, value) {
+				commandsData.push(value);
+			});
+
+			commandsList = new List('commands', options, commandsData);
+		});
+
+		let racesList = null;
+		$.getJSON(traitListURL, function (data) {
+			var options = {
+				valueNames: ['name', 'price', 'description'],
+				item: '<tr><td class="name" scope="row"></td><td class="price"></td><td class="description"></td></tr>'
+			};
+
+			var racesData = [];
+			$.each(data.races, function (index, value) {
+				if (value["enabled"] == true) {
+					racesData.push(value);
+				}
+			});
+
+			racesList = new List('races', options, racesData);
+		});
+
+		$("#item-price-min").keyup(function () {
+			updateItemFilter();
+		});
+
+		$("#item-price-max").keyup(function () {
+			updateItemFilter();
+		});
+
+		function updateItemFilter() {
+			var minPrice = $("#item-price-min").val();
+			var maxPrice = $("#item-price-max").val();
+			itemList.filter(function (item) {
+				var allow = true;
+				if (minPrice != "" && parseInt(item.values().price) < minPrice) {
+					allow = false;
+				}
+				if (maxPrice != "" && parseInt(item.values().price) > maxPrice) {
+					allow = false;
+				}
+				return allow;
+			});
+			eventList.filter(function (item) {
+				var allow = true;
+				if (minPrice != "" && parseInt(item.values().price) < minPrice) {
+					allow = false;
+				}
+				if (maxPrice != "" && parseInt(item.values().price) > maxPrice) {
+					allow = false;
+				}
+				return allow;
+			});
+			traitList.filter(function (item) {
+				var allow = true;
+				if (minPrice != "" && parseInt(item.values().addPrice) < minPrice) {
+					allow = false;
+				}
+				if (maxPrice != "" && parseInt(item.values().addPrice) > maxPrice) {
+					allow = false;
+				}
+				return allow;
+			});
+			modList.filter(function (item) {
+				var allow = true;
+				return allow;
+			});
+			commandsList.filter(function (item) {
+				var allow = true;
+				return allow;
+			});
+		}
+		function Calculator() {
+			var Counter = 0, Coins = 0, Cost = 0, Current = 0;
+			Coins = document.getElementById("Coins").value;
+			Cost = document.getElementById("Cost").value;
+			if (Coins == null || Cost == null) {
+				console.log(`Error. Either Coins or Cost resulted in null!`);
+				document.getElementById(`Results`).innerHTML += `Error. Either Coins or Cost resulted in null!<br>`;
+			}
+			if (Coins == 0 && Cost == 0) {
+				console.log(`Why do you bother me wit this?`);
+				document.getElementById(`Results`).innerHTML += `Why do you bother me with this?<br>`;
+			}
+			else {
+				Counter = Number(Counter);
+				Coins = Number(Coins);
+				Cost = Number(Cost);
+				Current = Number(Current)
+				if (document.getElementById(`Calculate_Ammount`).checked) {
+					console.log(`Input[Ammount: ${Counter} Coins left: ${Coins} Total Cost: ${Current}]`);
+					document.getElementById(`Results`).innerHTML += `Input[Ammount: ${Counter} Coins left: ${Coins} Total Cost: ${Current}]<br>`;
+					while (Coins >= Cost) {
+						Counter += 1;
+						Coins -= Cost;
+						Current = Current + Cost;
+					}
+					console.log(`Ammount: ${Counter} Coins left: ${Coins} Total Cost: ${Current}`);
+					document.getElementById(`Results`).innerHTML += `Ammount: ${Counter} Coins left: ${Coins} Total Cost: ${Current}<br>`;
+				}
+				if (document.getElementById(`Calculate_Cost`).checked) {
+					console.log(`Input[Ammount: ${Counter} Cost: ${Cost} Total Cost: ${Current}]`);
+					document.getElementById(`Results`).innerHTML += `Input[Ammount: ${Coins} Cost: ${Cost} Total Cost: ${Current}]<br>`;
+					while (Counter < Coins) {
+						Counter += 1; Current = Current + Cost;
+					}
+					console.log(`Ammount: ${Counter} Cost: ${Cost} Total Cost: ${Current}`);
+					document.getElementById(`Results`).innerHTML += `Ammount: ${Counter} Cost: ${Cost} Total Cost: ${Current}<br>`;
+				}
+			}
+		}
+		function Reset() {
+			Counter = 0, Coins = 0, Cost = 0, Current = 0;
+			document.getElementById(`Results`).innerHTML = ``;
+			console.log(`Calculator History reset!`);
+		}
+	</script>
+	<script type="text/javascript">
+		var tabs = angular.module('tabs', [])
+			.controller('tabCtrl', function ($scope) {
+				$scope.selected = "1";
+			});
+	</script>
+</body>
+
+</html>
